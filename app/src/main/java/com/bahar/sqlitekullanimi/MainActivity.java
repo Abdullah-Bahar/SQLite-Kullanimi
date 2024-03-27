@@ -1,15 +1,19 @@
 package com.bahar.sqlitekullanimi;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -17,11 +21,17 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
+    private static final int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 1;
+    private int SELECTED_ID; // Tıklanan Liste elemanlarının id'lerini tutmak için kullanılır
     private EditText editTxtFirstName, editTxtLastName, editTxtEmail;
     private Button btnSave, btnUpdate, btnRemove;
     private ListView listView;
     private DatabaseHelper dbHelper;
-    private int SELECTED_ID;
+
+    // Fotoğraf İşlemleri İçin
+    private ImageView imgProfilFoto;
+    private ImageButton imgBtnFotoAdd;
+    private Uri resimUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -35,21 +45,20 @@ public class MainActivity extends AppCompatActivity
         // ListView'i doldur
         loadListViewData();
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                Calisanlar selectedCalisan = (Calisanlar) parent.getItemAtPosition(position);
-                SELECTED_ID = selectedCalisan.getId();
-
-                // EditText'lere ilgili bilgileri yaz
-                editTxtFirstName.setText(selectedCalisan.getFirstName());
-                editTxtLastName.setText(selectedCalisan.getLastName());
-                editTxtEmail.setText(selectedCalisan.getEmail());
-            }
-        });
+        // listView'de tıklama işlemi
+        ListViewClick();
     }
+
+    ActivityResultLauncher<String> resimSecmePenceresi = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            new ActivityResultCallback<Uri>() {
+                @Override
+                public void onActivityResult(Uri o) {
+                    imgProfilFoto.setImageURI(o);
+                    resimUri = o;
+                }
+            }
+    ) ;
 
     public void InitializeVariables()
     {
@@ -62,10 +71,67 @@ public class MainActivity extends AppCompatActivity
         btnRemove = findViewById(R.id.button2);
         listView = findViewById(R.id.listView);
 
+        // Foto Nesneleri
+        imgProfilFoto = (ImageView) findViewById(R.id.imgProfilFoto);
+        imgBtnFotoAdd = (ImageButton) findViewById(R.id.imgBtnFotoAdd);
+        resimUri = null;
+
         // Database nesnesi
         // dbHelper = new DatabaseHelper(this);                     // Veritabanı yalnızca bu Activity tarafından kullanılabilir.
         dbHelper = new DatabaseHelper(getApplicationContext());     // Tüm Activity'ler tarafından kullanılan bir veritabanı için
         dbHelper.CloseDatabase();   // Veri abanı bağlantısı açık kalmaması için
+    }
+
+    public void ListViewClick() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Calisanlar selectedCalisan = (Calisanlar) parent.getItemAtPosition(position);
+                SELECTED_ID = selectedCalisan.getId();
+
+                // EditText'lere ilgili bilgileri yaz
+                editTxtFirstName.setText(selectedCalisan.getFirstName());
+                editTxtLastName.setText(selectedCalisan.getLastName());
+                editTxtEmail.setText(selectedCalisan.getEmail());
+
+
+                if (selectedCalisan.getImgUri() != null)
+                {
+                    resimUri = Uri.parse(selectedCalisan.getImgUri());
+                    imgProfilFoto.setImageURI(Uri.parse(selectedCalisan.getImgUri()));
+
+                }
+            }
+        });
+    }
+
+    public void btnFotoAdd (View v)
+    {
+        /*
+        // I. Proje içinden foto ekleme
+        imgProfilFoto.setImageResource(R.drawable.profile);
+
+        // II. Proje dışından foto ekleme
+        String path = Environment.getExternalStorageDirectory() + "/Picture/hediye.png";
+        File file = new File(path);
+        if (file.exists())
+        {
+            Bitmap img = BitmapFactory.decodeFile(path);
+            imgProfilFoto.setImageBitmap(img);
+        }
+
+        // III. Galeriden foto seçmek
+        resimSecmePenceresi.launch("Image/*");
+        */
+
+        // Gerekli izin kontrolleri yapılacaksa image ekleme ayrı bir method'a taşındı
+        openGallery();
+    }
+
+    public void openGallery()
+    {
+        resimSecmePenceresi.launch("image/*");
     }
 
     public void btnAdd(View v)
@@ -81,7 +147,9 @@ public class MainActivity extends AppCompatActivity
         else
         {
             dbHelper.OpenDatabase();
-            long result = dbHelper.AddCalisan(new Calisanlar(0, firstName, lastName, email));
+            if (resimUri == null)
+                resimUri = Uri.parse("/drawable/baseline_insert_photo_24.xml");
+            long result = dbHelper.AddCalisan(new Calisanlar(0, firstName, lastName, email, resimUri.toString()));
             dbHelper.CloseDatabase();
             if (result > -1)
             {
@@ -113,7 +181,9 @@ public class MainActivity extends AppCompatActivity
         }
         else
         {
-            Calisanlar calisan = new Calisanlar(SELECTED_ID, firstName, lastName, email);
+            if (resimUri == null)
+                resimUri = Uri.parse("/drawable/baseline_insert_photo_24.xml");
+            Calisanlar calisan = new Calisanlar(SELECTED_ID, firstName, lastName, email, resimUri.toString());
             dbHelper.OpenDatabase();
             long result = dbHelper.UpdateCalisan(calisan);
             dbHelper.CloseDatabase();
@@ -166,5 +236,7 @@ public class MainActivity extends AppCompatActivity
         editTxtLastName.setText("");
         editTxtEmail.setText("");
         SELECTED_ID = 0;
+        imgProfilFoto.setImageResource(R.drawable.baseline_insert_photo_24);
+        resimUri = null;
     }
 }

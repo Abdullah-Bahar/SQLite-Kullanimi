@@ -11,5 +11,6 @@ public class TablesInfo
         public static final String COLUMN_LAST_NAME = "LastName";
         public static final String COLUMN_FIRST_NAME = "FirstName";
         public static final String COLUMN_EMAIL = "Email";
+        public static final String COLUMN_IMG = "Resim";
     }
 }

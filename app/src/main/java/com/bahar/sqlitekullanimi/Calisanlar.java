@@ -1,17 +1,21 @@
 package com.bahar.sqlitekullanimi;
 
+import android.net.Uri;
+
 public class Calisanlar
 {
     private int id;
     private String firstName;
     private String lastName;
     private String email;
+    private String imgUri;
 
-    public Calisanlar(int id, String firstName, String lastName, String email) {
+    public Calisanlar(int id, String firstName, String lastName, String email, String imgUri) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.imgUri = imgUri;
     }
 
     public int getId() {
@@ -44,6 +48,14 @@ public class Calisanlar
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getImgUri() {
+        return imgUri;
+    }
+
+    public void setImgUri(String imgUri) {
+        this.imgUri = imgUri;
     }
 
     @Override

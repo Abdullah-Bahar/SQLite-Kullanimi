@@ -8,6 +8,19 @@
 
 
     <EditText
+        android:id="@+id/editTxtLastName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Last Name"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/editTxtEmail"
+        app:layout_constraintEnd_toEndOf="@+id/editTxtFirstName"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/editTxtFirstName"
+        app:layout_constraintTop_toBottomOf="@+id/editTxtFirstName" />
+
+    <EditText
         android:id="@+id/editTxtFirstName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,38 +30,30 @@
         android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/editTxtLastName"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.144"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/editTxtLastName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Last Name"
-        android:inputType="text"
-        app:layout_constraintBottom_toTopOf="@+id/editTxtEmail"
-        app:layout_constraintEnd_toEndOf="@+id/editTxtFirstName"
-        app:layout_constraintStart_toStartOf="@+id/editTxtFirstName"
-        app:layout_constraintTop_toBottomOf="@+id/editTxtFirstName" />
-
 
     <EditText
         android:id="@+id/editTxtEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="29dp"
+        android:layout_marginEnd="28dp"
         android:ems="10"
         android:hint="Email"
         android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="@+id/editTxtLastName"
-        app:layout_constraintStart_toStartOf="@+id/editTxtLastName"
+        app:layout_constraintEnd_toStartOf="@+id/imgBtnFotoAdd"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTxtLastName" />
 
     <ListView
         android:id="@+id/listView"
-        android:layout_width="408dp"
-        android:layout_height="301dp"
+        android:layout_width="404dp"
+        android:layout_height="247dp"
         android:layout_marginTop="21dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,14 +62,15 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="420dp"
-        android:layout_height="55dp"
+        android:layout_width="422dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="342dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/listView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/editTxtEmail"
-        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintHorizontal_bias="0.165"
         app:layout_constraintStart_toStartOf="@+id/editTxtEmail"
-        app:layout_constraintTop_toBottomOf="@+id/editTxtEmail">
+        app:layout_constraintTop_toBottomOf="@+id/textView">
 
         <Button
             android:id="@+id/button"
@@ -102,5 +108,48 @@
             android:onClick="btnRemove"
             android:text="Sil" />
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imgProfilFoto"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="88dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginBottom="19dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/imgBtnFotoAdd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editTxtLastName"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/baseline_insert_photo_24" />
+
+    <ImageButton
+        android:id="@+id/imgBtnFotoAdd"
+        android:layout_width="130dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="220dp"
+        android:layout_marginEnd="16dp"
+        android:onClick="btnFotoAdd"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editTxtEmail"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_gallery" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="130dp"
+        android:layout_height="15dp"
+        android:layout_marginStart="27dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="25dp"
+        android:text="Fotoğraf Ekle"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editTxtEmail"
+        app:layout_constraintTop_toBottomOf="@+id/imgBtnFotoAdd" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
