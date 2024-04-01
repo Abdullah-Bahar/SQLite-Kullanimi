@@ -8,14 +8,14 @@ public class Calisanlar
     private String firstName;
     private String lastName;
     private String email;
-    private String imgUri;
+    private byte[] imageBytes;
 
-    public Calisanlar(int id, String firstName, String lastName, String email, String imgUri) {
+    public Calisanlar(int id, String firstName, String lastName, String email, byte[] imageBytes) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.imgUri = imgUri;
+        this.imageBytes = imageBytes;
     }
 
     public int getId() {
@@ -50,12 +50,12 @@ public class Calisanlar
         this.email = email;
     }
 
-    public String getImgUri() {
-        return imgUri;
+    public byte[] getImageBytes() {
+        return imageBytes;
     }
 
-    public void setImgUri(String imgUri) {
-        this.imgUri = imgUri;
+    public void setImageBytes(byte[] imageBytes) {
+        this.imageBytes = imageBytes;
     }
 
     @Override
