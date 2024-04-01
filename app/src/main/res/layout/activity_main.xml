@@ -76,9 +76,9 @@
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15sp"
+            android:layout_marginLeft="5sp"
             android:layout_marginTop="3sp"
-            android:layout_marginRight="15sp"
+            android:layout_marginRight="5sp"
             android:layout_marginBottom="3sp"
             android:layout_weight="1"
             android:onClick="btnUpdate"
@@ -88,9 +88,9 @@
             android:id="@+id/btnSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15sp"
+            android:layout_marginLeft="5sp"
             android:layout_marginTop="3sp"
-            android:layout_marginRight="15sp"
+            android:layout_marginRight="5sp"
             android:layout_marginBottom="3sp"
             android:layout_weight="1"
             android:onClick="btnAdd"
@@ -100,13 +100,25 @@
             android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15sp"
+            android:layout_marginLeft="5sp"
             android:layout_marginTop="3sp"
-            android:layout_marginRight="15sp"
+            android:layout_marginRight="5sp"
             android:layout_marginBottom="3sp"
             android:layout_weight="1"
             android:onClick="btnRemove"
             android:text="Sil" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5sp"
+            android:layout_marginTop="3sp"
+            android:layout_marginRight="5sp"
+            android:layout_marginBottom="3sp"
+            android:layout_weight="1"
+            android:onClick="btnTemizle"
+            android:text="Clear" />
     </LinearLayout>
 
     <ImageView

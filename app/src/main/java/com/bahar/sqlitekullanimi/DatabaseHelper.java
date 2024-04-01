@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
                     TablesInfo.CalisanlarEntry.COLUMN_FIRST_NAME + " VARCHAR NOT NULL, " +
                     TablesInfo.CalisanlarEntry.COLUMN_LAST_NAME + " CHAR(50) NOT NULL, " +
                     TablesInfo.CalisanlarEntry.COLUMN_EMAIL + " TEST UNIQUE, " +
-                    TablesInfo.CalisanlarEntry.COLUMN_IMG + " TEXT " +
+                    TablesInfo.CalisanlarEntry.COLUMN_IMG + " BLOB " +
                     ")";
 
     private SQLiteDatabase db;
@@ -101,7 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
         cv.put(TablesInfo.CalisanlarEntry.COLUMN_FIRST_NAME, calisan.getFirstName());
         cv.put(TablesInfo.CalisanlarEntry.COLUMN_LAST_NAME, calisan.getLastName());
         cv.put(TablesInfo.CalisanlarEntry.COLUMN_EMAIL, calisan.getEmail());
-        cv.put(TablesInfo.CalisanlarEntry.COLUMN_IMG, calisan.getImgUri());
+        cv.put(TablesInfo.CalisanlarEntry.COLUMN_IMG, calisan.getImageBytes());
 
         long result = db.insert(TablesInfo.CalisanlarEntry.TABLE_NAME,
                 null,   // NULL olamayacak sütun adı
@@ -119,7 +119,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
         cv.put(TablesInfo.CalisanlarEntry.COLUMN_FIRST_NAME, calisan.getFirstName());
         cv.put(TablesInfo.CalisanlarEntry.COLUMN_LAST_NAME, calisan.getLastName());
         cv.put(TablesInfo.CalisanlarEntry.COLUMN_EMAIL, calisan.getEmail());
-        cv.put(TablesInfo.CalisanlarEntry.COLUMN_IMG, calisan.getImgUri());
+        cv.put(TablesInfo.CalisanlarEntry.COLUMN_IMG, calisan.getImageBytes());
 
         // güncellenen kayıt sayısını belirtir
         long result = db.update(TablesInfo.CalisanlarEntry.TABLE_NAME,
@@ -163,8 +163,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
             String firstName = cursor.getString(cursor.getColumnIndexOrThrow(TablesInfo.CalisanlarEntry.COLUMN_FIRST_NAME));
             String lastName = cursor.getString(cursor.getColumnIndexOrThrow(TablesInfo.CalisanlarEntry.COLUMN_LAST_NAME));
             String email = cursor.getString(cursor.getColumnIndexOrThrow(TablesInfo.CalisanlarEntry.COLUMN_EMAIL));
-            String img = cursor.getString(cursor.getColumnIndexOrThrow(TablesInfo.CalisanlarEntry.COLUMN_IMG));
-            list.add(new Calisanlar(id, firstName, lastName, email, img));
+            byte[] image = cursor.getBlob(cursor.getColumnIndexOrThrow(TablesInfo.CalisanlarEntry.COLUMN_IMG));
+            list.add(new Calisanlar(id, firstName, lastName, email, image));
         }
 
         cursor.close();
@@ -191,7 +191,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
                 cursor.getString(cursor.getColumnIndexOrThrow(TablesInfo.CalisanlarEntry.COLUMN_FIRST_NAME)),
                 cursor.getString(cursor.getColumnIndexOrThrow(TablesInfo.CalisanlarEntry.COLUMN_LAST_NAME)),
                 cursor.getString(cursor.getColumnIndexOrThrow(TablesInfo.CalisanlarEntry.COLUMN_EMAIL)),
-                cursor.getString(cursor.getColumnIndexOrThrow(TablesInfo.CalisanlarEntry.COLUMN_IMG))
+                cursor.getBlob(cursor.getColumnIndexOrThrow(TablesInfo.CalisanlarEntry.COLUMN_IMG))
         );
 
         cursor.close();
