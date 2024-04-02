@@ -9,12 +9,9 @@ import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import java.io.ByteArrayOutputStream;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -127,10 +124,8 @@ public class MainActivity extends AppCompatActivity
                 IMAGE_BYTES = selectedCalisan.getImageBytes();
                 if (IMAGE_BYTES != null) {
                     imgProfilFoto.setImageBitmap(BitmapFactory.decodeByteArray(IMAGE_BYTES, 0, IMAGE_BYTES.length));
-                    Log.d("ForografIzleme", "Veritabından fotoğraf geldi");
                 } else {
                     imgProfilFoto.setImageResource(R.drawable.baseline_insert_photo_24);
-                    Log.d("ForografIzleme", "Varsayılan fotoğraf geldi");
                 }
             }
         });
@@ -240,14 +235,11 @@ public class MainActivity extends AppCompatActivity
                 // Kullanıcı fotoğraf seçmiş, güncellemeyi yap
                 Bitmap bitmap = BitmapFactory.decodeByteArray(IMAGE_BYTES, 0, IMAGE_BYTES.length);
                 updatedImageBytes = bitmapToByteArray(bitmap, CompressFormat.JPEG, 100);
-                System.out.println("foto eklenmis");
             }
             else
             {
                 updatedImageBytes = IMAGE_BYTES;
-                System.out.println("foto eklenmemis");
             }
-            System.out.println(updatedImageBytes.length);
 
             Calisanlar calisan = new Calisanlar(SELECTED_ID, firstName, lastName, email, updatedImageBytes);
             dbHelper.OpenDatabase();
