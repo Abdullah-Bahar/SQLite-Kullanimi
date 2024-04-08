@@ -32,7 +32,6 @@
         app:layout_constraintStart_toStartOf="@+id/editTxtFirstName"
         app:layout_constraintTop_toBottomOf="@+id/editTxtFirstName" />
 
-
     <EditText
         android:id="@+id/editTxtEmail"
         android:layout_width="wrap_content"
@@ -46,7 +45,7 @@
         app:layout_constraintTop_toBottomOf="@+id/editTxtLastName" />
 
     <ListView
-        android:id="@+id/listView"
+        android:id="@+id/listViewCalisanlar"
         android:layout_width="408dp"
         android:layout_height="301dp"
         android:layout_marginTop="21dp"
@@ -60,14 +59,14 @@
         android:layout_width="420dp"
         android:layout_height="55dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/listView"
+        app:layout_constraintBottom_toTopOf="@+id/listViewCalisanlar"
         app:layout_constraintEnd_toEndOf="@+id/editTxtEmail"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="@+id/editTxtEmail"
         app:layout_constraintTop_toBottomOf="@+id/editTxtEmail">
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btnUpdate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15sp"
@@ -75,7 +74,7 @@
             android:layout_marginRight="15sp"
             android:layout_marginBottom="3sp"
             android:layout_weight="1"
-            android:onClick="btnUpdate"
+            android:onClick="btnUpdateClick"
             android:text="Güncelle" />
 
         <Button
@@ -87,11 +86,11 @@
             android:layout_marginRight="15sp"
             android:layout_marginBottom="3sp"
             android:layout_weight="1"
-            android:onClick="btnAdd"
+            android:onClick="btnSaveClick"
             android:text="Kaydet" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btnRemove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15sp"
@@ -99,7 +98,7 @@
             android:layout_marginRight="15sp"
             android:layout_marginBottom="3sp"
             android:layout_weight="1"
-            android:onClick="btnRemove"
+            android:onClick="btnRemoveClick"
             android:text="Sil" />
     </LinearLayout>
 

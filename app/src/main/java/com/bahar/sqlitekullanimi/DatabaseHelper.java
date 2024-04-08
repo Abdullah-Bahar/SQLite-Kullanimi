@@ -21,8 +21,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
                     "(" +
                     TablesInfo.CalisanlarEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     TablesInfo.CalisanlarEntry.COLUMN_FIRST_NAME + " VARCHAR NOT NULL, " +
-                    TablesInfo.CalisanlarEntry.COLUMN_LAST_NAME + " CHAR(50) NOT NULL, " +
-                    TablesInfo.CalisanlarEntry.COLUMN_EMAIL + " TEST UNIQUE" +
+                    TablesInfo.CalisanlarEntry.COLUMN_LAST_NAME + " VARCHAR NOT NULL, " +
+                    TablesInfo.CalisanlarEntry.COLUMN_EMAIL + " VARCHAR NOT NULL" +
                     ")";
 
     private SQLiteDatabase db;
@@ -34,11 +34,6 @@ public class DatabaseHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase db)
     {
-        /*
-            - Fonksiyonu uygulama yüklendiğinde sadece bir kere çağrılmaktadır.
-            Bu metod ile uygulamada kullanılacak veritabanı ve bu veri tabanında kullanılacak olan tablolar oluşturulur.
-        */
-
         // Komutu çalıştırarak Database'i oluşturduk
         db.execSQL(TABLE_CALISANLAR_CREATE);
     }
@@ -46,11 +41,6 @@ public class DatabaseHelper extends SQLiteOpenHelper
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
-        /*
-            - Tablolarda herhangi bir güncelleme işlemi gerektiğinde kullanılır.
-            - Herhangi bir güncelleme işlemi olup olmadığına DATABASE_VERSION bilgisine bakılır.
-            Tabloda herhangi bir değişiklik durumunda bu numaranın yükseltilmesi yeterli olacaktır.
-        */
         // Tabloyu sil
         db.execSQL("DROP TABLE IF EXISTS " + TablesInfo.CalisanlarEntry.TABLE_NAME);
         // Yeniden oluştur
@@ -69,80 +59,40 @@ public class DatabaseHelper extends SQLiteOpenHelper
             db.close();;
     }
 
-    public long mailControl(String email)
+    public void AddCalisan(Calisanlar calisan)
     {
         OpenDatabase();
-        Cursor cursor = db.query(
-                TablesInfo.CalisanlarEntry.TABLE_NAME,
-                null,
-                TablesInfo.CalisanlarEntry.COLUMN_EMAIL + " = ?",
-                new String[]{email},
-                null,
-                null,
-                null
-        );
+        String sqlQuery = "INSERT INTO " + TablesInfo.CalisanlarEntry.TABLE_NAME + " (" +
+                TablesInfo.CalisanlarEntry.COLUMN_FIRST_NAME + ", " +
+                TablesInfo.CalisanlarEntry.COLUMN_LAST_NAME + ", " +
+                TablesInfo.CalisanlarEntry.COLUMN_EMAIL + ") " +
+                "VALUES ('" + calisan.getFirstName() + "', '" + calisan.getLastName() + "', '" + calisan.getEmail() + "');";
 
-        long count = cursor.getCount(); // Sorgudan dönen satırların sayısı
-        cursor.close();
+        db.execSQL(sqlQuery);
         CloseDatabase();
-
-        if (count > 0)
-            return -2; // E-posta adresi zaten var, hata mesajı gösterin ve -2 döndürün
-
-        return count;
     }
 
-    public long AddCalisan(Calisanlar calisan)
+    public void UpdateCalisan(Calisanlar calisan)
     {
-        if (mailControl(calisan.getEmail()) == -2)
-            return -2;
-
         OpenDatabase();
-        ContentValues cv = new ContentValues(); // Database' değer eklemek vb. işlemler için kullanılıyor
+        String sqlQuery = "UPDATE " + TablesInfo.CalisanlarEntry.TABLE_NAME + " SET " +
+                TablesInfo.CalisanlarEntry.COLUMN_FIRST_NAME + " = '" + calisan.getFirstName() + "', " +
+                TablesInfo.CalisanlarEntry.COLUMN_LAST_NAME + " = '" + calisan.getLastName() + "', " +
+                TablesInfo.CalisanlarEntry.COLUMN_EMAIL + " = '" + calisan.getEmail() + "' " +
+                " WHERE " + TablesInfo.CalisanlarEntry.COLUMN_ID + " = " + calisan.getId() + ";";
 
-        // Sutun ile sutuna karşılık gelen değerler eşleştiriliyor.
-        cv.put(TablesInfo.CalisanlarEntry.COLUMN_FIRST_NAME, calisan.getFirstName());
-        cv.put(TablesInfo.CalisanlarEntry.COLUMN_LAST_NAME, calisan.getLastName());
-        cv.put(TablesInfo.CalisanlarEntry.COLUMN_EMAIL, calisan.getEmail());
-
-        long result = db.insert(TablesInfo.CalisanlarEntry.TABLE_NAME,
-                TablesInfo.CalisanlarEntry.COLUMN_ID,   // NULL olamayacak sütun adı
-                cv);
-
+        db.execSQL(sqlQuery);
         CloseDatabase();
-        return result;
     }
 
-    public long UpdateCalisan(Calisanlar calisan)
+    public void DeleteCalisan(int id)
     {
         OpenDatabase();
-        ContentValues cv = new ContentValues();
+        String sqlQuery = " DELETE FROM " + TablesInfo.CalisanlarEntry.TABLE_NAME +
+                " WHERE " + TablesInfo.CalisanlarEntry.COLUMN_ID + " = " + id + ";";
 
-        cv.put(TablesInfo.CalisanlarEntry.COLUMN_FIRST_NAME, calisan.getFirstName());
-        cv.put(TablesInfo.CalisanlarEntry.COLUMN_LAST_NAME, calisan.getLastName());
-        cv.put(TablesInfo.CalisanlarEntry.COLUMN_EMAIL, calisan.getEmail());
-
-        // güncellenen kayıt sayısını belirtir
-        long result = db.update(TablesInfo.CalisanlarEntry.TABLE_NAME,
-                cv,
-                TablesInfo.CalisanlarEntry.COLUMN_ID+"=?", // Güncelleme işlemi için belirtilen koşulu içeren bir SQL ifadesi
-                    new String[]{String.valueOf(calisan.getId())}); // Koşuldaki "?" işareti olan yet tutucunun yerine geçecek olan paramtre
-
+        db.execSQL(sqlQuery);
         CloseDatabase();
-        return result;
-    }
-
-    public long DeleteCalisan(int id)
-    {
-        OpenDatabase();
-        long result = db.delete(TablesInfo.CalisanlarEntry.TABLE_NAME,
-                TablesInfo.CalisanlarEntry.COLUMN_ID+"=?",
-                new String[]{String.valueOf(id)});
-
-        CloseDatabase();
-        return result;
-            // Silinen satır sayısını döndürür.
-            // Eğer silinen satır sayısı yoksa 0 döndürür.
     }
 
     public ArrayList<Calisanlar> getAllCalisanlar()

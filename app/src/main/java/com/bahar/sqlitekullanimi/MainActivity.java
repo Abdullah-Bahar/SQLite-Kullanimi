@@ -17,11 +17,13 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
+    // Mobil UI Nesneleri
     private EditText editTxtFirstName, editTxtLastName, editTxtEmail;
     private Button btnSave, btnUpdate, btnRemove;
-    private ListView listView;
+    private ListView listViewCalisanlar;
     private DatabaseHelper dbHelper;
-    private int SELECTED_ID;
+
+    private int SELECTED_ID; // Guncelleme ve Silme islemleri icin kullanılan global değişken
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity
         // ListView'i doldur
         loadListViewData();
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        listViewCalisanlar.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
@@ -58,97 +60,69 @@ public class MainActivity extends AppCompatActivity
         editTxtLastName = (EditText) findViewById(R.id.editTxtLastName);
         editTxtEmail = (EditText) findViewById(R.id.editTxtEmail);
         btnSave = findViewById(R.id.btnSave);
-        btnUpdate = findViewById(R.id.button);
-        btnRemove = findViewById(R.id.button2);
-        listView = findViewById(R.id.listView);
+        btnUpdate = findViewById(R.id.btnUpdate);
+        btnRemove = findViewById(R.id.btnRemove);
+        listViewCalisanlar = findViewById(R.id.listViewCalisanlar);
 
         // Database nesnesi
         // dbHelper = new DatabaseHelper(this);                     // Veritabanı yalnızca bu Activity tarafından kullanılabilir.
         dbHelper = new DatabaseHelper(getApplicationContext());     // Tüm Activity'ler tarafından kullanılan bir veritabanı için
         dbHelper.CloseDatabase();   // Veri abanı bağlantısı açık kalmaması için
+
+        // Global değişken
+        SELECTED_ID = 0;
     }
 
-    public void btnAdd(View v)
+    public void btnSaveClick(View v)
     {
-        String firstName = editTxtFirstName.getText().toString().trim();
-        String lastName = editTxtLastName.getText().toString().trim();
-        String email = editTxtEmail.getText().toString().trim();
+        String[] editTxts = getDataFromEditText(); // EditText'lerdeki değerleri al (0 = FirstName, 1 = LastName, 2 = Email)
 
-        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty())
-        {
+        // EditText değerleri boş mu kontrolü
+        if (isEmptyEditTxt(editTxts))
             Toast.makeText(MainActivity.this, "Tüm alanları doldurun", Toast.LENGTH_SHORT).show();
-        }
         else
         {
             dbHelper.OpenDatabase();
-            long result = dbHelper.AddCalisan(new Calisanlar(0, firstName, lastName, email));
+            dbHelper.AddCalisan(new Calisanlar(0, editTxts[0], editTxts[1], editTxts[2]));
             dbHelper.CloseDatabase();
-            if (result > -1)
-            {
-                Toast.makeText(MainActivity.this, "Çalışan başarıyla eklendi", Toast.LENGTH_SHORT).show();
-                clearEditTexts();
-                loadListViewData();
-            }
-            else if (result == -2)
-            {
-                Toast.makeText(MainActivity.this, "Email Zaten Mevcut", Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-                Toast.makeText(MainActivity.this, "Çalışan eklenirken bir hata oluştu", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(MainActivity.this, "Çalışan başarıyla eklendi", Toast.LENGTH_SHORT).show();
+            clearEditTexts();
+            loadListViewData();
         }
     }
 
-    public void btnUpdate(View v)
+    public void btnUpdateClick(View v)
     {
-        String firstName = editTxtFirstName.getText().toString().trim();
-        String lastName = editTxtLastName.getText().toString().trim();
-        String email = editTxtEmail.getText().toString().trim();
+        String[] editTxts = getDataFromEditText();
 
-        // Secilen calisani guncelle
-        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty())
-        {
+        // EditText değerleri boş mu kontrolü
+        if (isEmptyEditTxt(editTxts))
             Toast.makeText(MainActivity.this, "Tüm alanları doldurun", Toast.LENGTH_SHORT).show();
-        }
         else
         {
-            Calisanlar calisan = new Calisanlar(SELECTED_ID, firstName, lastName, email);
+            Calisanlar calisan = new Calisanlar(SELECTED_ID, editTxts[0], editTxts[1], editTxts[2]);
             dbHelper.OpenDatabase();
-            long result = dbHelper.UpdateCalisan(calisan);
+            dbHelper.UpdateCalisan(calisan);
             dbHelper.CloseDatabase();
-            if (result > 0)
-            {
-                Toast.makeText(MainActivity.this, "Çalışan başarıyla güncellendi", Toast.LENGTH_SHORT).show();
-                clearEditTexts();
-                loadListViewData(); // ListView'i güncelle
-            }
-            else if (result == -2)
-            {
-                Toast.makeText(MainActivity.this, "Email Zaten Mevcut", Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-                Toast.makeText(MainActivity.this, "Çalışan güncellenirken bir hata oluştu", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(MainActivity.this, "Çalışan başarıyla güncellendi", Toast.LENGTH_SHORT).show();
+            clearEditTexts();
+            loadListViewData();
         }
     }
 
-    public void btnRemove(View v)
+    public void btnRemoveClick(View v)
     {
         dbHelper.OpenDatabase();
-        long result = dbHelper.DeleteCalisan(SELECTED_ID);
+        dbHelper.DeleteCalisan(SELECTED_ID);
         dbHelper.CloseDatabase();
-        if (result > 0)
+        if (SELECTED_ID != 0)
         {
             Toast.makeText(MainActivity.this, "Çalışan başarıyla silindi", Toast.LENGTH_SHORT).show();
             clearEditTexts();
-            loadListViewData(); // ListView'i güncelle
+            loadListViewData();
         }
         else
-        {
-            Toast.makeText(MainActivity.this, "Çalışan silinirken bir hata oluştu", Toast.LENGTH_SHORT).show();
-        }
+            Toast.makeText(MainActivity.this, "Silinecek elemanı seçin", Toast.LENGTH_SHORT).show();
     }
 
     private void loadListViewData()
@@ -156,15 +130,31 @@ public class MainActivity extends AppCompatActivity
         dbHelper.OpenDatabase();
         ArrayList<Calisanlar> calisanList = dbHelper.getAllCalisanlar();
         ArrayAdapter<Calisanlar> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, calisanList);
-        listView.setAdapter(adapter);
+        listViewCalisanlar.setAdapter(adapter);
         dbHelper.CloseDatabase();
     }
 
+    // EditText'leri ve GLOBAL ID'yi sıfırlar
     private void clearEditTexts()
     {
         editTxtFirstName.setText("");
         editTxtLastName.setText("");
         editTxtEmail.setText("");
         SELECTED_ID = 0;
+    }
+
+    // EditText'lerdeki verileri bir String Array olarak döndürür.
+    private String[] getDataFromEditText()
+    {
+        String[] userInput = new String[3];
+        userInput[0] = editTxtFirstName.getText().toString().trim();
+        userInput[1] = editTxtLastName.getText().toString().trim();
+        userInput[2] = editTxtEmail.getText().toString().trim();
+        return userInput;
+    }
+
+    private boolean isEmptyEditTxt(String[] editTxts)
+    {
+        return editTxts[0].isEmpty() || editTxts[1].isEmpty() || editTxts[2].isEmpty();
     }
 }
